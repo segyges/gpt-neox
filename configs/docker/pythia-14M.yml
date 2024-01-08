@@ -88,14 +88,14 @@
   "steps_per_print": 10,
   "wall_clock_breakdown": true,
 
-  "train-data-paths": ["/data/pile_deduped/pile_0.87_deduped_text_document"],
-  "valid-data-paths": ["/data/pile_deduped/pile_0.87_deduped_text_document"],
-  "test-data-paths": ["/data/pile_deduped/pile_0.87_deduped_text_document"],
+  "train-data-paths": ["/home/mchorse/data/pile_deduped/pile_0.87_deduped_text_document"],
+  "valid-data-paths": ["/home/mchorse/data/pile_deduped/pile_0.87_deduped_text_document"],
+  "test-data-paths": ["/home/mchorse/data/pile_deduped/pile_0.87_deduped_text_document"],
 
   "tokenizer-type": "HFTokenizer",
-  "vocab-file": "/data/tokenizers/20B_tokenizer.json",
+  "vocab-file": "/home/mchorse/data/tokenizers/20B_tokenizer.json",
 
-  "save": "/data/chk/pythia-14M",
-  "load": "/data/chk/pythia-14M",
+  "save": "/home/mchorse/chk/",
+  "load": "/home/mchorse/chk/",
   "checkpoint_validation_with_forward_pass": False
 }
