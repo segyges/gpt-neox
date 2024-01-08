@@ -2,7 +2,7 @@ version: '3'
 services:
   gpt-neox:
     command: nvidia-smi -q --loop=10
-    image: gpt-neox
+    image: pythia
     build:
       context: .
       dockerfile: Dockerfile

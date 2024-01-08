@@ -19,11 +19,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 #### System package (uses default Python 3 version in Ubuntu 20.04)
 RUN apt-get update -y && \
     apt-get install -y \
-        git python3 python3-dev libpython3-dev python3-pip sudo pdsh \
-        htop llvm-9-dev tmux zstd software-properties-common build-essential autotools-dev \
-        nfs-common pdsh cmake g++ gcc curl wget vim less unzip htop iftop iotop ca-certificates ssh \
-        rsync iputils-ping net-tools libcupti-dev libmlx4-1 infiniband-diags ibutils ibverbs-utils \
-        rdmacm-utils perftest rdma-core nano && \
+    git python3 python3-dev libpython3-dev python3-pip sudo pdsh \
+    htop llvm-9-dev tmux zstd software-properties-common build-essential autotools-dev \
+    nfs-common pdsh cmake g++ gcc curl wget vim less unzip htop iftop iotop ca-certificates ssh \
+    rsync iputils-ping net-tools libcupti-dev libmlx4-1 infiniband-diags ibutils ibverbs-utils \
+    rdmacm-utils perftest rdma-core nano && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
     update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 && \
     pip install --upgrade pip && \
@@ -86,12 +86,15 @@ RUN mkdir -p /home/mchorse/.ssh /job && \
     echo 'export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/mpi/lib:/usr/local/mpi/lib64:$LD_LIBRARY_PATH' >> /home/mchorse/.bashrc
 
 #### Python packages
-RUN pip install torch==1.8.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html && pip cache purge
+RUN pip install torch==1.10.2+cu111 -f https://download.pytorch.org/whl/torch_stable.html && pip cache purge
 COPY requirements/requirements.txt .
 COPY requirements/requirements-onebitadam.txt .
 COPY requirements/requirements-sparseattention.txt .
+COPY requirements/requirements-flashattention.txt .
 RUN pip install -r requirements.txt && pip install -r requirements-onebitadam.txt && \
     pip install -r requirements-sparseattention.txt && \
+    pip install -r requirements-flashattention.txt && \
+    pip install best-download && \
     pip install protobuf==3.20.* && \
     pip cache purge
 

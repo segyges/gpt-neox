@@ -95,7 +95,7 @@
   "tokenizer-type": "HFTokenizer",
   "vocab-file": "/data/tokenizers/20B_tokenizer.json",
 
-  "save": "/data/chk/min-pythia",
-  "load": "/data/chk/min-pythia",
+  "save": "/data/chk/pythia-14M",
+  "load": "/data/chk/pythia-14M",
   "checkpoint_validation_with_forward_pass": False
 }
