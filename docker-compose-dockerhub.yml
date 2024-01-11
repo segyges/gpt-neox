@@ -1,6 +1,6 @@
 version: '3'
 services:
-  gpt-neox:
+  pythia:
     command: nvidia-smi -q --loop=10
     image: segyges/pythia:v1.0.1
     shm_size: 1g
