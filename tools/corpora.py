@@ -41,6 +41,7 @@ class DataDownloader(ABC):
         merge_file=None,
         vocab_file=None,
         data_dir=None,
+        force_redownload=None,
         num_workers=None,
     ):
         if tokenizer_type is None:
@@ -49,6 +50,8 @@ class DataDownloader(ABC):
             data_dir = os.environ.get("DATA_DIR", "./data")
         if merge_file is None:
             merge_file = f"{data_dir}/gpt2-merges.txt"
+        if force_redownload is None:
+            force_redownload = False
         if vocab_file is None:
             if tokenizer_type == "GPT2BPETokenizer":
                 vocab_file = f"{data_dir}/gpt2-vocab.json"
@@ -64,6 +67,7 @@ class DataDownloader(ABC):
         self._merge_file = merge_file
         self._vocab_file = vocab_file
         self._data_dir = data_dir
+        self._force_redownload = force_redownload
         self._num_workers = num_workers
 
     @property
@@ -151,9 +155,13 @@ class DataDownloader(ABC):
         os.system(cmd)
 
     def prepare(self):
-        if not self.exists():
+        if self._force_redownload:
             self.download()
-            self.tokenize()
+        else:
+            if not self.exists():
+                self.download()
+
+        self.tokenize()
 
 
 class Enron(DataDownloader):
@@ -170,8 +178,7 @@ class PileSubset(DataDownloader):
 class Pile(DataDownloader):
     name = "pile"
     urls = [
-        f"https://the-eye.eu/public/AI/pile/train/{i:02}.jsonl.zst"
-        for i in range(30)
+        f"https://the-eye.eu/public/AI/pile/train/{i:02}.jsonl.zst" for i in range(30)
     ]
 
 
@@ -217,16 +224,12 @@ class PubMed(DataDownloader):
 
 class Books1(DataDownloader):
     name = "books1"
-    urls = [
-        "https://the-eye.eu/public/AI/pile_preliminary_components/books1.tar.gz"
-    ]
+    urls = ["https://the-eye.eu/public/AI/pile_preliminary_components/books1.tar.gz"]
 
 
 class Books3(DataDownloader):
     name = "books3"
-    urls = [
-        "https://the-eye.eu/public/AI/pile_preliminary_components/books3.tar.gz"
-    ]
+    urls = ["https://the-eye.eu/public/AI/pile_preliminary_components/books3.tar.gz"]
 
 
 class HackerNews(DataDownloader):
@@ -238,7 +241,7 @@ class HackerNews(DataDownloader):
 class OpenWebText2(DataDownloader):
     name = "openwebtext2"
     urls = [
-        "https://the-eye.eu/public/AI/pile_preliminary_components/openwebtext2.jsonl.zst.tar"
+        "https://huggingface.co/datasets/segyges/OpenWebText2/resolve/main/openwebtext2.jsonl.zst.tar"
     ]
     num_docs = 17103000
 
