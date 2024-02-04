@@ -1,8 +1,5 @@
 { # Base configuration for pythia model
   # Omits model size, paths for data and checkpoints
-  # parallelism settings
-  "pipe-parallel-size": 0,
-  "model-parallel-size": 1,
 
   "scaled-upper-triang-masked-softmax-fusion": true,
   "bias-gelu-fusion": true,
@@ -21,22 +18,7 @@
   },
   "min_lr": 0.0001,
 
-  "zero_optimization": {
-    "stage": 0,
-    "allgather_partitions": true,
-    "allgather_bucket_size": 50000000,
-    "overlap_comm": true,
-    "reduce_scatter": true,
-    "reduce_bucket_size": 50000000,
-    "contiguous_gradients": true,
-    "cpu_offload": false
-  },
-
-  # batch size (trained on 32 gpus)
-  "train_micro_batch_size_per_gpu": 32,
-  "gas": 1,
   "data-impl": "mmap",
-  "num_workers": 4,
 
   # activation checkpointing
   "checkpoint-activations": false, #true,
