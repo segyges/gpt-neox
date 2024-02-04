@@ -1,4 +1,5 @@
-{
+{ # This actually specifies more than one epoch
+  # This is in line with pythia deduped model training
   "train-data-paths": ["/home/mchorse/data/pile_deduped/pile_0.87_deduped_text_document"],
   "valid-data-paths": ["/home/mchorse/data/pile_deduped/pile_0.87_deduped_text_document"],
   "test-data-paths": ["/home/mchorse/data/pile_deduped/pile_0.87_deduped_text_document"],
@@ -8,5 +9,10 @@
 
   "save": "/home/mchorse/chk/",
   "load": "/home/mchorse/chk/",
-  "checkpoint_validation_with_forward_pass": False
+  "checkpoint_validation_with_forward_pass": False,
+
+  "train-iters": 143000,
+  "lr-decay-iters": 143000,
+  "eval-interval": 143000,
+  "warmup": 0.01,
 }

@@ -1,0 +1,15 @@
+{
+  # model settings
+  "num-layers": 6,
+  "hidden-size": 128,
+  "num-attention-heads": 4,
+  "seq-length": 2048,
+  "max-position-embeddings": 2048,
+  "pos-emb": "rotary",
+  "rotary-pct": 0.25,
+  "no-weight-tying": true,
+  "gpt-j-residual": true,
+  "output-layer-parallelism": "column",
+
+  "attention-config": [[["flash"], 6]],
+}
