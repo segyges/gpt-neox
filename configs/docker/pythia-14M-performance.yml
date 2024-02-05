@@ -15,9 +15,9 @@
   },
 
   # batch size (set for 2 GPUs)
-  "train_micro_batch_size_per_gpu": 32,
-  "gradient_accumulation_size": 16,
+  "train_micro_batch_size_per_gpu": 16,
+  "gradient_accumulation_steps": 32,
 
   # Number of dataloader workers
-  "num_workers": 4,
+  "num_workers": 2,
 }
