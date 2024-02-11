@@ -167,6 +167,53 @@ def wang_init_method(n_layers, dim, use_mup_outer=False, mup_init_scale=1.0):
     return init_
 
 
+# This is called ZerO init in the paper that proposes it
+# We call it this instead because zerO is a bad name
+# Code from here: https://gist.github.com/Ryu1845/09d51411f78252f5f98f03ae5527abae
+# Original code accompanying paper here: https://github.com/jiaweizzhao/ZerO-initialization/
+def identity_hadamard_init_method():
+    def hadamard(n: int, dtype=torch.int8):
+        """This function is a port of the one in scipy.linalg"""
+
+        if n < 1:
+            lg2 = 0
+        else:
+            lg2 = int(math.log(n, 2))
+        if 2**lg2 != n:
+            raise ValueError(
+                "n must be an positive integer, and n must be " "a power of 2"
+            )
+
+        H = torch.tensor([[1]], dtype=dtype)
+
+        # Sylvester's construction
+        for i in range(0, lg2):
+            H = torch.vstack((torch.hstack((H, H)), torch.hstack((H, -H))))
+
+        return H
+
+    @torch.compile()
+    @torch.no_grad()
+    def linear_ZerO_init_(tensor: torch.Tensor):
+        # Algorithm 1 in the paper.
+        assert len(tensor.shape) == 2, "linear_ZerO_init_ only works on 2D tensors"
+        m, n = tensor.shape
+
+        if m <= n:
+            tensor[:] = torch.nn.init.eye_(torch.empty(m, n))
+        else:  # m > n
+            clog_m = math.ceil(math.log2(m))
+            p = 2 ** (clog_m)
+            tensor[:] = (
+                torch.nn.init.eye_(torch.empty(m, p))
+                @ (hadamard(p, dtype=tensor.dtype) / (2 ** (clog_m / 2)))
+                @ torch.nn.init.eye_(torch.empty(p, n))
+            )
+        return tensor
+
+    return linear_ZerO_init_
+
+
 def get_init_methods(args):
 
     if args.use_mup:
@@ -203,6 +250,8 @@ def get_init_methods(args):
             return small_init_init_method(
                 args.hidden_size, args.use_mup, args.mup_init_scale
             )
+        elif name == "identity_hadamard":
+            return identity_hadamard_init_method()
         else:
             raise NotImplementedError(f"Unknown init method {name}")
 
