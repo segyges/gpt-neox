@@ -171,6 +171,7 @@ def wang_init_method(n_layers, dim, use_mup_outer=False, mup_init_scale=1.0):
 # We call it this instead because zerO is a bad name
 # Code from here: https://gist.github.com/Ryu1845/09d51411f78252f5f98f03ae5527abae
 # Original code accompanying paper here: https://github.com/jiaweizzhao/ZerO-initialization/
+# Optimized somewhat to reduce vram allocations
 def identity_hadamard_init_method():
     def hadamard(n: int, dtype=torch.int8):
         """This function is a port of the one in scipy.linalg"""
@@ -192,7 +193,6 @@ def identity_hadamard_init_method():
 
         return H
 
-    @torch.compile()
     @torch.no_grad()
     def linear_ZerO_init_(tensor: torch.Tensor):
         # Algorithm 1 in the paper.
@@ -202,13 +202,18 @@ def identity_hadamard_init_method():
         if m <= n:
             tensor[:] = torch.nn.init.eye_(torch.empty(m, n))
         else:  # m > n
+            tensor.to("cuda")
             clog_m = math.ceil(math.log2(m))
             p = 2 ** (clog_m)
-            tensor[:] = (
-                torch.nn.init.eye_(torch.empty(m, p))
-                @ (hadamard(p, dtype=tensor.dtype) / (2 ** (clog_m / 2)))
-                @ torch.nn.init.eye_(torch.empty(p, n))
+            in_tensor = torch.nn.init.eye_(torch.empty(m, p, dtype=tensor.dtype)).to(
+                "cuda"
             )
+            had = (hadamard(p, dtype=tensor.dtype) / 2 ** (clog_m / 2)).to("cuda")
+            intermediate = in_tensor @ had
+            tensor[:] = intermediate @ torch.nn.init.eye_(
+                torch.empty(p, n, dtype=tensor.dtype)
+            ).to("cuda")
+            tensor.to("cpu")
         return tensor
 
     return linear_ZerO_init_
