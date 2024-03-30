@@ -73,14 +73,15 @@ RUN mkdir -p /home/mchorse/.ssh /job && \
     echo 'export LD_LIBRARY_PATH=/usr/local/lib:/usr/local/mpi/lib:/usr/local/mpi/lib64:$LD_LIBRARY_PATH' >> /home/mchorse/.bashrc
 
 #### Python packages
-COPY requirements/* ./
-RUN python -m pip install --no-cache-dir -r requirements.txt && pip install -r requirements-onebitadam.txt
-RUN python -m pip install -r requirements-flashattention.txt
-RUN python -m pip install -r requirements-wandb.txt
+#COPY requirements/* ./
+#RUN python -m pip install --no-cache-dir -r requirements.txt && pip install -r requirements-onebitadam.txt
+#RUN python -m pip install -r requirements-flashattention.txt
+#RUN python -m pip install -r requirements-wandb.txt
+#RUN python -m pip install protobuf==3.20.*
 
-COPY megatron/fused_kernels/ /megatron/fused_kernels
-WORKDIR /megatron/fused_kernels
-RUN python setup.py install
+#COPY megatron/fused_kernels/ /megatron/fused_kernels
+#WORKDIR /megatron/fused_kernels
+#RUN python setup.py install
 
 # Clear staging
 RUN mkdir -p /tmp && chmod 0777 /tmp
